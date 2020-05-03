@@ -127,7 +127,7 @@ function linkSocketEvents() {
 
     try {
       $.getScript(gameInfo.level, function () {
-        PIXI.loader.add(['test_map.png']).load((loader, resources) => {
+        PIXI.Loader.shared.add(['test_map.png']).load((loader, resources) => {
           createGame(players)
           $('#canvas').show()
 
