@@ -1,0 +1,15 @@
+{
+  "presets": ["@babel/env"],
+  "plugins": [
+    "@babel/plugin-transform-runtime",
+    "@babel/proposal-object-rest-spread",
+    [
+      "@babel/plugin-proposal-class-properties",
+      {
+        "loose": true
+      }
+    ]
+  ],
+  "sourceMaps": true,
+  "retainLines": true
+}

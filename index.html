@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Lockstep</title>
+
+    <style>
+        #gameList {
+            list-style-type: none;
+            border: 1;
+            margin: 0;
+            padding: 0;
+            height:100px;
+            width:350px;
+            overflow:hidden;
+            overflow-y:scroll;
+        }
+
+        #lobbyMessages {
+            list-style-type: none;
+            overflow:hidden;
+            overflow-y:scroll;
+        }
+    </style>
+    <!--<script src="vendor/pixi.js"></script>-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="alert alert-warning" id="warningBanner" hidden>
+        <strong>Warning!</strong> <span id="warningMessage">Server connection is lost...</span>
+    </div>
+
+    <!--Форма ввода логина -->
+    <div id="submission" class="container" hidden>
+        <form id="submissionForm" class="form-horizontal" action="javascript:void(0)" method="post">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="nickname">Nickname:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="nickname" placeholder="should not be empty">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Proceed</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--Главное лобби-->
+    <div id="lobby" class="container" hidden>
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <select id="gameList" size="15" multiple>
+                </select>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <button id="joinGameButton" onclick="" class="btn btn-success" disabled>Join game</button>
+                <button id="createGameButton" onclick="" class="btn btn-primary">Create game</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul id="lobbyMessages">
+                </ul>
+            </div>
+        </div>
+
+        <div class="row" style="position: fixed; bottom:0px;">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <form id="lobbyChatForm" class="form-inline" action="javascript:void(0)" method="post">
+                    <div class="form-group">
+                        <label for="lobbyChatInput">Message:</label>
+                        <input type="text" class="form-control input-sm" id="lobbyChatInput" autocomplete="off" maxlength="300" style="width: 300px">
+                    </div>
+                    <button id="sendMessageButton" class="btn btn-default .btn-xs">&gt;&gt;</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--Форма создания новой игры-->
+    <div id="createGame" class="container" hidden>
+        <form id="createGameForm" class="form-horizontal" action="javascript:void(0)" method="post">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="gamename">Game name:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="gamename" placeholder="should not be empty">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--Лобби конкретной игры-->
+    <div id="gameLobby" class="container" hidden>
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <label class="radio-inline"><input type="radio" name="sideSelect" id="red" value="red"><p style="color: red">RED</p></label>
+                <label class="radio-inline"><input type="radio" name="sideSelect" id="blue" value="blue"><p style="color: blue">BLUE</p></label>
+                <label class="radio-inline"><input type="radio" name="sideSelect" id="green" value="green"><p style="color: green">GREEN</p></label>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                <div id="backCountTimer"></div>
+                <br />
+                <button id="startGameButton" onclick="" class="btn btn-default" disabled>Start</button>
+                <button id="leaveGameButton" onclick="" class="btn btn">Leave</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul id="gameLobbyMessages">
+                </ul>
+            </div>
+        </div>
+
+        <div class="row" style="position: fixed; bottom:0px;">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <form id="gamelobbyChatForm" class="form-inline" action="javascript:void(0)" method="post">
+                    <div class="form-group">
+                        <label for="gameLobbyMessage">Message:</label>
+                        <input type="text" class="form-control input-sm" id="gameLobbyMessage" autocomplete="off" maxlength="300" style="width: 300px">
+                    </div>
+                    <button type="submit" class="btn btn-default .btn-xs">&gt;&gt;</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="canvas" width="640" height="480" hidden>
+        Your browser doesn't appear to support the <code>&lt;canvas&gt;</code> element.
+    </canvas>
+</body>
+</html>

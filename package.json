@@ -1,0 +1,59 @@
+{
+  "name": "lockstep",
+  "version": "0.1.0",
+  "description": "Lockstep sandbox",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha -u tdd --recursive test",
+    "build": "babel src/server/ src/common/ -d dist/ -s",
+    "buildclient": "webpack --config webpack.config.js --env.dev --mode development",
+    "start": "nodemon src/server/ --exec babel-node",
+    "serve": "babel -w test/ -w src/server/ -w src/common/ -d dist/ -s | nodemon --watch dist"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "latest",
+    "socket.io-client": "latest"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-proposal-decorators": "^7.7.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-modules-commonjs": "^7.7.5",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "7.4.2",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "core-js": "^3.0.1",
+    "css-loader": "^2.1.0",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^5.0.2",
+    "file-saver": "^2.0.2",
+    "html-webpack-plugin": "^3.2.0",
+    "nodemon": "^2.0.3",
+    "react": "16.11.0",
+    "react-dom": "^16.11.0",
+    "regenerator-runtime": "^0.13.2",
+    "scriptjs": "^2.5.9",
+    "style-loader": "^0.23.1",
+    "styled-components": "^5.0.0",
+    "terser-webpack-plugin": "^2.3.2",
+    "webpack": "^4.29.3",
+    "webpack-bundle-analyzer": "^3.6.0",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "repository": {
+    "type": "hg",
+    "url": "http://scm.fimacomarketing.com/PIXIjs/lockstep"
+  },
+  "author": "Igor Kling <kling.igor.ksi@gmail.com>",
+  "private": true,
+  "license": "UNLICENSED"
+}
