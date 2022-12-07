@@ -11,7 +11,7 @@
     "serve": "babel -w test/ -w src/server/ -w src/common/ -d dist/ -s | nodemon --watch dist"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "socket.io": "latest",
     "socket.io-client": "latest"
   },
